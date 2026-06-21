@@ -243,7 +243,7 @@
     </div>
 
     <script>
-        // CREDENCIALES COMPROBADAS DE TU PROYECTO SUPABASE (DE TU CAPTURA DE PANTALLA)
+        // CREDENCIALES COMPROBADAS DE TU PROYECTO SUPABASE
         const SUPABASE_URL = "https://amwkdeiujtvujtbfeqh.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZWl1anR2dWp0YmZlcWgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDM5NzA0NCwiZXhwIjoyMDY1OTczMDQ0fQ.hN6vR3B1lD_jCgIuBwI-ZofD_x_D-ZovO_o6-B8v8nE"; 
         
@@ -253,9 +253,9 @@
         let carrito = [];
         let productosLocales = [];
 
-        // CONTROL DE ACCESO (LOGIN DIRECTO DESDE SUPABASE)
+        // CONTROL DE ACCESO CORREGIDO (Ignora mayúsculas/minúsculas del teclado)
         async function login() {
-            const userIn = document.getElementById('loginUser').value.trim();
+            const userIn = document.getElementById('loginUser').value.trim().toLowerCase();
             const passIn = document.getElementById('loginPass').value.trim();
 
             if(!userIn || !passIn) return alert("Por favor complete todos los campos");
