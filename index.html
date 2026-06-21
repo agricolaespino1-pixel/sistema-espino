@@ -24,7 +24,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg-main); color: var(--text-main); height: 100vh; overflow: hidden; }
         .hidden { display: none !important; }
-        /* PANTALLA DE LOGIN */
+        
         #login-container {
             display: flex; justify-content: center; align-items: center;
             height: 100vh; background: linear-gradient(135deg, #1e3a8a, var(--sidebar-dark));
@@ -44,7 +44,7 @@
             border: none; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer;
         }
         .error-msg { color: var(--accent-red); font-size: 13px; margin-top: 10px; font-weight: 500; }
-        /* INTERFAZ PRINCIPAL */
+        
         #main-container { display: flex; height: 100vh; width: 100vw; position: relative; }
         .mobile-menu-btn {
             display: none; position: fixed; top: 15px; left: 15px; z-index: 100;
@@ -262,10 +262,10 @@
         </main>
     </div>
     <script>
-        // === CONFIGURACIÓN DE LA NUBE ===
         const SUPABASE_URL = "https://amwkdeuijvujtbfaqh.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZXVpanV0dnVqdGJmYXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5OTgxNzMsImV4cCI6MjA5NzU3NDE3M30.SJ-TwYyrcT0tj1bIN_b0nto0zJaU-kTId7T0MyF4MBA" ;
-        const _supabase = (SUPABASE_KEY !== "TU_ANON_PUBLIC_KEY_AQUI") ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZXVpanV0dnVqdGJmYXFoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTk5ODE3MywiZXhwIjoyMDk3NTc0MTczfQ.8hCk7bhbIWgofD5VdWhB0WZOXvStnNUhAKWvCEbq98s"; 
+        
+        const _supabase = (SUPABASE_KEY !== "TU_ANON_PUBLIC_KEY") ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
         
         let users_db = { "admin": { password: "123", role: "admin", name: "Administrador Espino" } };
         let products = [];
