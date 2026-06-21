@@ -41,7 +41,7 @@
             <p>Agrícola espino</p>
             <div class="form-group">
                 <label>Usuario Técnico</label>
-                <input type="text" id="loginUser" placeholder="admin">
+                <input type="text" id="loginUser" placeholder="admin o Andy">
             </div>
             <div class="form-group">
                 <label>Contraseña Acceso</label>
@@ -107,23 +107,21 @@
     </div>
 
     <script>
-        const SUPABASE_URL = "https://amwkdeiujtvujtbfeqh.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZWl1anR2dWp0YmZlcWgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDM5NzA0NCwiZXhwIjoyMDY1OTczMDQ0fQ.hN6vR3B1lD_jCgIuBwI-ZofD_x_D-ZovO_o6-B8v8nE";
+        // URL EXTRAÍDA DIRECTAMENTE DE TU LLAVE DE ACCESO PROPIA
+        const SUPABASE_URL = "https://amwkdeuijutvujtbfaqh.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZXVpanV0dnVqdGJmYXFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5OTgxNzMsImV4cCI6MjA5NzU3NDE3M30.SJ-TwYyrcT0tj1bIN_b0nto0zJaU-kTId7T0MyF4MBA";
         
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null; let carrito = []; let productosLocales = [];
 
-        // FUNCIÓN DE LOGIN CORREGIDA DE FORMA ESTÁNDAR COMPATIBLE
         async function login() {
-            // Convertimos la entrada a minúsculas limpia en JS directo para evitar fallas del .eq
             const userIn = document.getElementById('loginUser').value.trim().toLowerCase();
             const passIn = document.getElementById('loginPass').value.trim();
             
-            if(!userIn || !passIn) return alert("Por favor, rellene todos los campos");
+            if(!userIn || !passIn) return alert("Por favor complete los campos");
 
             try {
-                // Hacemos la consulta limpia con .eq
                 const { data, error } = await _supabase
                     .from('users')
                     .select('*')
@@ -148,12 +146,11 @@
                     cargarTodo();
                 }
             } catch (err) { 
-                alert("Error crítico del sistema: " + err.message); 
+                alert("Error de conexión: " + err.message); 
             }
         }
 
         function logout() { location.reload(); }
-        
         function switchTab(e, panelId) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -161,10 +158,7 @@
             document.getElementById(panelId).classList.add('active');
         }
 
-        function cargarTodo() { 
-            obtenerProductos(); 
-            obtenerVentas(); 
-        }
+        function cargarTodo() { obtenerProductos(); obtenerVentas(); }
 
         async function obtenerProductos() {
             try {
@@ -179,10 +173,10 @@
                     const select = document.getElementById('ventaProducto'); 
                     select.innerHTML = '';
                     data.forEach(p => { 
-                        select.innerHTML += `<option value="${p.id}">${p.name} (Stock: ${p.stock})</option>`; 
+                        select.innerHTML += `<option value="${p.id}">${p.name}</option>`; 
                     });
                 }
-            } catch(e) { console.log(e); }
+            } catch(e) {}
         }
 
         async function guardarProducto() {
@@ -191,7 +185,6 @@
             const price = parseFloat(document.getElementById('prodPrice').value);
             const stock = parseInt(document.getElementById('prodStock').value);
             if(!id || !name || isNaN(price) || isNaN(stock)) return alert("Complete los datos");
-            
             await _supabase.from('products').upsert({ id, name, price, stock });
             alert("Producto Guardado");
             obtenerProductos();
@@ -202,7 +195,6 @@
             const password = document.getElementById('userPassword').value.trim();
             const name = document.getElementById('userName').value.trim();
             if(!username || !password || !name) return alert("Complete los datos");
-
             await _supabase.from('users').insert({ username, password, name, role: 'user' });
             alert("Usuario Registrado");
         }
