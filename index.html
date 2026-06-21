@@ -243,7 +243,7 @@
     </div>
 
     <script>
-        // CREDENCIALES COMPROBADAS DE TU PROYECTO SUPABASE
+        // Credenciales oficiales de tu Supabase actualizadas
         const SUPABASE_URL = "https://amwkdeiujtvujtbfeqh.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZWl1anR2dWp0YmZlcWgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDM5NzA0NCwiZXhwIjoyMDY1OTczMDQ0fQ.hN6vR3B1lD_jCgIuBwI-ZofD_x_D-ZovO_o6-B8v8nE"; 
         
@@ -253,8 +253,8 @@
         let carrito = [];
         let productosLocales = [];
 
-        // CONTROL DE ACCESO CORREGIDO (Ignora mayúsculas/minúsculas del teclado)
         async function login() {
+            // Convierte automáticamente el texto ingresado a minúsculas para prevenir problemas de teclado
             const userIn = document.getElementById('loginUser').value.trim().toLowerCase();
             const passIn = document.getElementById('loginPass').value.trim();
 
@@ -306,7 +306,6 @@
             if(currentUser.role === 'admin') obtenerUsuarios();
         }
 
-        // LOGICA DE INVENTARIO
         async function obtenerProductos() {
             const { data, error } = await _supabase.from('products').select('*').order('id', { ascending: true });
             if (!error && data) {
@@ -346,7 +345,6 @@
             }
         }
 
-        // LOGICA DEL PERSONAL
         async function obtenerUsuarios() {
             const { data, error } = await _supabase.from('users').select('*');
             if(!error && data) {
@@ -378,7 +376,6 @@
             }
         }
 
-        // VENTAS Y CARRITO
         function agregarAlCarrito() {
             const prodId = parseInt(document.getElementById('ventaProducto').value);
             const cantidad = parseInt(document.getElementById('ventaCantidad').value);
