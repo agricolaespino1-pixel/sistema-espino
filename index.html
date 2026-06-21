@@ -253,21 +253,7 @@
         let carrito = [];
         let productosLocales = [];
 
-        // Aseguramos que la base de datos tenga siempre las credenciales maestras correctas actualizadas
-        async function verificarYCrearAdminMaestro() {
-            try {
-                await _supabase.from('users').upsert({
-                    id: 1,
-                    username: 'admin',
-                    password: '2512', // Clave de acceso establecida
-                    name: 'Administrador Espino',
-                    role: 'admin'
-                }, { onConflict: 'username' });
-            } catch(e) { console.log(e); }
-        }
-        verificarYCrearAdminMaestro();
-
-        // CONTROL DE ACCESO (LOGIN)
+        // CONTROL DE ACCESO (LOGIN DIRECTO DESDE SUPABASE)
         async function login() {
             const userIn = document.getElementById('loginUser').value.trim();
             const passIn = document.getElementById('loginPass').value.trim();
