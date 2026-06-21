@@ -41,7 +41,7 @@
             <p>Agrícola espino</p>
             <div class="form-group">
                 <label>Usuario Técnico</label>
-                <input type="text" id="loginUser" placeholder="admin o Andy">
+                <input type="text" id="loginUser" placeholder="admin">
             </div>
             <div class="form-group">
                 <label>Contraseña Acceso</label>
@@ -66,7 +66,7 @@
         <div class="container">
             <div id="ventasPanel" class="panel active">
                 <h2>Registrar Venta</h2>
-                <div class="form-group"><label>Producto</label><select id="ventaProducto"></select></div>
+                <div class="form-group"><label>Producto</label><select id="ventaProducto"><option>Cargando productos...</option></select></div>
                 <div class="form-group"><label>Cantidad</label><input type="number" id="ventaCantidad" value="1" min="1"></div>
                 <button onclick="agregarAlCarrito()">Agregar al Carrito</button>
                 <div class="table-responsive">
@@ -79,10 +79,7 @@
                 <button onclick="procesarVenta()" style="background:#4f46e5;">Finalizar Venta</button>
             </div>
 
-            <div id="historialPanel" class="panel">
-                <h2>Historial de Ventas</h2>
-                <div id="listaHistorial"></div>
-            </div>
+            <div id="historialPanel" class="panel"><h2>Historial de Ventas</h2><div id="listaHistorial"></div></div>
 
             <div id="inventarioPanel" class="panel">
                 <h2>Inventario</h2>
@@ -100,63 +97,63 @@
             </div>
 
             <div id="personalPanel" class="panel">
-                <h2>Personal Técnico</h2>
-                <div class="form-group"><label>Usuario de Acceso</label><input type="text" id="userUsername"></div>
-                <div class="form-group"><label>Clave Acceso</label><input type="text" id="userPassword"></div>
-                <div class="form-group"><label>Nombre Completo</label><input type="text" id="userName"></div>
+                <h2>Personal</h2>
+                <div class="form-group"><label>Usuario</label><input type="text" id="userUsername"></div>
+                <div class="form-group"><label>Clave</label><input type="text" id="userPassword"></div>
+                <div class="form-group"><label>Nombre</label><input type="text" id="userName"></div>
                 <button onclick="guardarUsuario()">Registrar Usuario</button>
             </div>
         </div>
     </div>
 
     <script>
-        // CREDENCIALES PÚBLICAS REVISADAS DE SUPABASE
         const SUPABASE_URL = "https://amwkdeiujtvujtbfeqh.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZWl1anR2dWp0YmZlcWgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDM5NzA0NCwiZXhwIjoyMDY1OTczMDQ0fQ.hN6vR3B1lD_jCgIuBwI-ZofD_x_D-ZovO_o6-B8v8nE";
         
-        // Inicialización de Supabase Client
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentUser = null; 
-        let carrito = []; 
-        let productosLocales = [];
+        let currentUser = null; let carrito = []; let productosLocales = [];
 
-        // INGRESO AL SISTEMA (Con lectura tolerante a mayúsculas/minúsculas)
+        // FUNCIÓN DE LOGIN CORREGIDA DE FORMA ESTÁNDAR COMPATIBLE
         async function login() {
-            const userIn = document.getElementById('loginUser').value.trim();
+            // Convertimos la entrada a minúsculas limpia en JS directo para evitar fallas del .eq
+            const userIn = document.getElementById('loginUser').value.trim().toLowerCase();
             const passIn = document.getElementById('loginPass').value.trim();
-            if(!userIn || !passIn) return alert("Por favor complete los dos campos");
+            
+            if(!userIn || !passIn) return alert("Por favor, rellene todos los campos");
 
             try {
-                // El comando .ilike ignora si pones Admin o admin, Andy o andy
+                // Hacemos la consulta limpia con .eq
                 const { data, error } = await _supabase
                     .from('users')
                     .select('*')
-                    .ilike('username', userIn)
+                    .eq('username', userIn)
                     .eq('password', passIn);
 
-                if (error || !data || data.length === 0) {
+                if (error) {
+                    alert("Error en consulta Base de Datos: " + error.message);
+                    return;
+                }
+
+                if (!data || data.length === 0) {
                     alert("Usuario o contraseña incorrectos");
                 } else {
                     currentUser = data[0];
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
                     
-                    // Si el rol es admin habilita la pestaña de crear usuarios
                     if(currentUser.role === 'admin') {
                         document.getElementById('tabPersonal').style.display = 'block';
                     }
                     cargarTodo();
                 }
             } catch (err) { 
-                alert("Error de conexión: " + err.message); 
+                alert("Error crítico del sistema: " + err.message); 
             }
         }
 
-        function logout() { 
-            location.reload(); 
-        }
-
+        function logout() { location.reload(); }
+        
         function switchTab(e, panelId) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -169,23 +166,23 @@
             obtenerVentas(); 
         }
 
-        // CONTROL DE INVENTARIO DESDE BASE DE DATOS
         async function obtenerProductos() {
-            const { data } = await _supabase.from('products').select('*').order('id', { ascending: true });
-            if (data) {
-                productosLocales = data;
-                const tbody = document.querySelector('#tablaProductos tbody'); 
-                tbody.innerHTML = '';
-                data.forEach(p => { 
-                    tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>S/ ${p.price.toFixed(2)}</td><td>${p.stock}</td></tr>`; 
-                });
-                
-                const select = document.getElementById('ventaProducto'); 
-                select.innerHTML = '';
-                data.forEach(p => { 
-                    select.innerHTML += `<option value="${p.id}">${p.name}</option>`; 
-                });
-            }
+            try {
+                const { data, error } = await _supabase.from('products').select('*').order('id', { ascending: true });
+                if (!error && data) {
+                    productosLocales = data;
+                    const tbody = document.querySelector('#tablaProductos tbody'); 
+                    tbody.innerHTML = '';
+                    data.forEach(p => { 
+                        tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>S/ ${p.price.toFixed(2)}</td><td>${p.stock}</td></tr>`; 
+                    });
+                    const select = document.getElementById('ventaProducto'); 
+                    select.innerHTML = '';
+                    data.forEach(p => { 
+                        select.innerHTML += `<option value="${p.id}">${p.name} (Stock: ${p.stock})</option>`; 
+                    });
+                }
+            } catch(e) { console.log(e); }
         }
 
         async function guardarProducto() {
@@ -193,87 +190,49 @@
             const name = document.getElementById('prodName').value.trim();
             const price = parseFloat(document.getElementById('prodPrice').value);
             const stock = parseInt(document.getElementById('prodStock').value);
+            if(!id || !name || isNaN(price) || isNaN(stock)) return alert("Complete los datos");
             
-            if(!id || !name || isNaN(price) || isNaN(stock)) return alert("Rellene todos los campos de producto");
-
             await _supabase.from('products').upsert({ id, name, price, stock });
-            alert("Inventario Actualizado");
-            document.getElementById('prodId').value = '';
-            document.getElementById('prodName').value = '';
-            document.getElementById('prodPrice').value = '';
-            document.getElementById('prodStock').value = '';
+            alert("Producto Guardado");
             obtenerProductos();
         }
 
-        // REGISTRAR NUEVOS TRABAJADORES DESDE PANEL ADMIN
         async function guardarUsuario() {
-            const username = document.getElementById('userUsername').value.trim();
+            const username = document.getElementById('userUsername').value.trim().toLowerCase();
             const password = document.getElementById('userPassword').value.trim();
             const name = document.getElementById('userName').value.trim();
-            
-            if(!username || !password || !name) return alert("Rellene todos los campos del técnico");
+            if(!username || !password || !name) return alert("Complete los datos");
 
             await _supabase.from('users').insert({ username, password, name, role: 'user' });
-            alert("Nuevo usuario guardado exitosamente");
-            document.getElementById('userUsername').value = '';
-            document.getElementById('userPassword').value = '';
-            document.getElementById('userName').value = '';
+            alert("Usuario Registrado");
         }
 
-        // OPERACIONES DEL CARRITO DE COMPRAS
         function agregarAlCarrito() {
             const prodId = parseInt(document.getElementById('ventaProducto').value);
             const cantidad = parseInt(document.getElementById('ventaCantidad').value);
             const producto = productosLocales.find(p => p.id === prodId);
-            
-            if(producto) { 
-                carrito.push({ id: producto.id, name: producto.name, price: producto.price, cantidad }); 
-                renderCarrito(); 
-            }
+            if(producto) { carrito.push({ id: producto.id, name: producto.name, price: producto.price, cantidad }); renderCarrito(); }
         }
 
         function renderCarrito() {
-            const tbody = document.querySelector('#tablaCarrito tbody'); 
-            tbody.innerHTML = ''; 
-            let total = 0;
-            
-            carrito.forEach(item => { 
-                total += item.price * item.cantidad; 
-                tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.cantidad}</td><td>S/ ${item.price.toFixed(2)}</td><td>S/ ${(item.price * item.cantidad).toFixed(2)}</td><td>-</td></tr>`; 
-            });
+            const tbody = document.querySelector('#tablaCarrito tbody'); tbody.innerHTML = ''; let total = 0;
+            carrito.forEach(item => { total += item.price * item.cantidad; tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.cantidad}</td><td>S/ ${item.price.toFixed(2)}</td><td>S/ ${(item.price * item.cantidad).toFixed(2)}</td><td>-</td></tr>`; });
             document.getElementById('totalCarrito').textContent = total.toFixed(2);
         }
 
-        // GUARDAR LA VENTA DE FORMA PERSISTENTE
         async function procesarVenta() {
-            if(carrito.length === 0) return alert("El carrito de ventas está vacío");
-            
-            const numBoleta = "BOL-" + Math.floor(100000 + Math.random() * 900000);
-            const totalVenta = parseFloat(document.getElementById('totalCarrito').textContent);
-            
-            await _supabase.from('sales').insert({ 
-                boleta: numBoleta, 
-                hora: new Date().toLocaleTimeString(), 
-                cajero: currentUser.name, 
-                total: totalVenta, 
-                items: carrito 
-            });
-            
-            alert("Venta registrada con éxito en Supabase"); 
-            carrito = []; 
-            renderCarrito(); 
-            obtenerVentas();
+            if(carrito.length === 0) return alert("Carrito vacío");
+            const numBoleta = "BOL-" + Math.floor(Math.random() * 900000);
+            await _supabase.from('sales').insert({ boleta: numBoleta, hora: new Date().toLocaleTimeString(), cajero: currentUser.name, total: parseFloat(document.getElementById('totalCarrito').textContent), items: carrito });
+            alert("Venta guardada"); carrito = []; renderCarrito(); obtenerVentas();
         }
 
         async function obtenerVentas() {
-            const { data } = await _supabase.from('sales').select('*').order('created_at', { ascending: false });
-            const contenedor = document.getElementById('listaHistorial'); 
-            contenedor.innerHTML = '';
-            if(data) { 
-                data.forEach(v => { 
-                    contenedor.innerHTML += `<div class="card"><b>${v.boleta}</b> - Total: S/ ${v.total.toFixed(2)} <br> <small>Hora: ${v.hora} | Encargado: ${v.cajero}</small></div>`; 
-                }); 
-            }
+            try {
+                const { data } = await _supabase.from('sales').select('*').order('created_at', { ascending: false });
+                const contenedor = document.getElementById('listaHistorial'); contenedor.innerHTML = '';
+                if(data) { data.forEach(v => { contenedor.innerHTML += `<div class="card"><b>${v.boleta}</b> - S/ ${v.total.toFixed(2)} <br> <small>${v.hora} - ${v.cajero}</small></div>`; }); }
+            } catch(e){}
         }
     </script>
 </body>
