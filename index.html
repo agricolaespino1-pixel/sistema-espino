@@ -3,97 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GRUPO ESPINO - Agrícola espino - Sistema de Gestión</title>
+    <title>GRUPO ESPINO - Sistema de Gestión</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
         body { background-color: #f4f6f9; color: #333; padding-bottom: 60px; }
-        
-        /* PANTALLA DE LOGIN PROFESIONAL */
-        .login-screen { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
-            padding: 20px; 
-        }
-        .login-box { 
-            background: white; 
-            padding: 40px 30px; 
-            border-radius: 12px; 
-            width: 100%; 
-            max-width: 420px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
-            text-align: center;
-        }
-        .login-logo {
-            width: 70px;
-            height: 70px;
-            background: #bbf7d0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px auto;
-            font-size: 32px;
-            box-shadow: 0 4px 10px rgba(187, 247, 208, 0.3);
-        }
-        .login-box h2 { 
-            border: none; 
-            font-size: 22px; 
-            margin-bottom: 8px; 
-            color: #0f172a;
-            font-weight: 700;
-            padding-left: 0;
-        }
-        .login-box p {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 25px;
-        }
+        .login-screen { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px; }
+        .login-box { background: white; padding: 40px 30px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center;}
+        .login-logo { width: 70px; height: 70px; background: #bbf7d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; font-size: 32px; }
+        .login-box h2 { font-size: 22px; margin-bottom: 8px; color: #0f172a; font-weight: 700; }
+        .login-box p { font-size: 14px; color: #64748b; margin-bottom: 25px; }
         .form-group { margin-bottom: 18px; text-align: left; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #334155; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; transition: all 0.3s; }
-        input:focus, select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-        .login-box button { 
-            width: 100%; 
-            padding: 14px; 
-            background: #3b82f6; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            font-size: 16px; 
-            cursor: pointer; 
-            margin-top: 10px; 
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-            transition: all 0.3s;
-        }
-        .login-box button:hover { background: #2563eb; transform: translateY(-1px); }
-
-        /* ENTORNO PRINCIPAL DEL SISTEMA */
+        input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; }
+        .login-box button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
         header { background-color: #1e293b; color: white; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; position: relative; }
-        .logout-btn { position: absolute; right: 15px; top: 12px; background-color: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .logout-btn { position: absolute; right: 15px; top: 12px; background-color: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
         .nav-tabs { display: flex; background-color: #334155; overflow-x: auto; }
-        .tab { flex: 1; text-align: center; padding: 12px; color: #cbd5e1; cursor: pointer; font-weight: 600; white-space: nowrap; }
+        .tab { flex: 1; text-align: center; padding: 12px; color: #cbd5e1; cursor: pointer; font-weight: 600; }
         .tab.active { background-color: #1e293b; color: #38bdf8; border-bottom: 3px solid #38bdf8; }
         .container { padding: 15px; max-width: 800px; margin: auto; }
         .panel { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 15px; }
         .panel.active { display: block; }
-        
-        .panel h2 { margin-bottom: 15px; color: #1e293b; font-size: 18px; border-left: 4px solid #38bdf8; padding-left: 8px; }
-        .panel button { width: 100%; padding: 12px; background-color: #0ea5e9; color: white; border: none; border-radius: 4px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
-        .panel button:hover { background-color: #0284c7; }
-        
         .table-responsive { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: left; }
-        th { background-color: #f1f5f9; font-weight: bold; }
+        th { background-color: #f1f5f9; }
         .card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 10px; }
-        .badge { display: inline-block; padding: 3px 7px; font-size: 12px; font-weight: bold; border-radius: 4px; color: white; }
-        .badge-admin { background-color: #a855f7; }
-        .badge-user { background-color: #0ea5e9; }
     </style>
 </head>
 <body>
@@ -103,10 +39,9 @@
             <div class="login-logo">🌿</div>
             <h2>GRUPO ESPINO</h2>
             <p>Agrícola espino</p>
-            
             <div class="form-group">
                 <label>Usuario Técnico</label>
-                <input type="text" id="loginUser" placeholder="Ej: admin">
+                <input type="text" id="loginUser" placeholder="admin o Andy">
             </div>
             <div class="form-group">
                 <label>Contraseña Acceso</label>
@@ -118,10 +53,9 @@
 
     <div id="mainContent" style="display: none;">
         <header>
-            <span id="headerTitle">GRUPO ESPINO - Agrícola espino</span>
+            <span>GRUPO ESPINO - Agrícola espino</span>
             <button class="logout-btn" onclick="logout()">Salir</button>
         </header>
-
         <nav class="nav-tabs">
             <div class="tab active" onclick="switchTab(event, 'ventasPanel')">Punto de Venta</div>
             <div class="tab" onclick="switchTab(event, 'historialPanel')">Historial</div>
@@ -131,140 +65,74 @@
 
         <div class="container">
             <div id="ventasPanel" class="panel active">
-                <h2>Registrar Nueva Venta</h2>
-                <div class="form-group">
-                    <label>Seleccionar Producto</label>
-                    <select id="ventaProducto"></select>
-                </div>
-                <div class="form-group">
-                    <label>Cantidad</label>
-                    <input type="number" id="ventaCantidad" value="1" min="1">
-                </div>
-                <button onclick="agregarAlCarrito()" style="background-color: #10b981;">Agregar al Carrito</button>
-
-                <h3 style="margin-top:20px; font-size:16px;">Carrito de Compras</h3>
+                <h2>Registrar Venta</h2>
+                <div class="form-group"><label>Producto</label><select id="ventaProducto"></select></div>
+                <div class="form-group"><label>Cantidad</label><input type="number" id="ventaCantidad" value="1" min="1"></div>
+                <button onclick="agregarAlCarrito()">Agregar al Carrito</button>
                 <div class="table-responsive">
                     <table id="tablaCarrito">
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Cant.</th>
-                                <th>Precio</th>
-                                <th>Total</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Total</th><th>Acción</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
-                <h3 style="text-align: right; margin-top: 15px; color: #1e293b;">Total: S/ <span id="totalCarrito">0.00</span></h3>
-                <button onclick="procesarVenta()" style="background-color: #4f46e5; margin-top: 15px;">Finalizar y Guardar Venta</button>
+                <h3 style="text-align:right; margin-top:15px;">Total: S/ <span id="totalCarrito">0.00</span></h3>
+                <button onclick="procesarVenta()" style="background:#4f46e5;">Finalizar Venta</button>
             </div>
 
             <div id="historialPanel" class="panel">
-                <h2>Historial de Ventas Guardadas</h2>
-                <div id="listaHistorial">Cargando ventas en tiempo real...</div>
+                <h2>Historial de Ventas</h2>
+                <div id="listaHistorial"></div>
             </div>
 
             <div id="inventarioPanel" class="panel">
-                <h2>Administración de Inventario</h2>
-                <div class="form-group">
-                    <label>Código o ID único del Producto</label>
-                    <input type="number" id="prodId" placeholder="Ej: 101">
-                </div>
-                <div class="form-group">
-                    <label>Nombre del Producto</label>
-                    <input type="text" id="prodName" placeholder="Ej: Humus Agrícola 1Kg">
-                </div>
-                <div class="form-group">
-                    <label>Precio (S/)</label>
-                    <input type="number" step="0.1" id="prodPrice" placeholder="Ej: 15.50">
-                </div>
-                <div class="form-group">
-                    <label>Stock Inicial</label>
-                    <input type="number" id="prodStock" placeholder="Ej: 100">
-                </div>
-                <button onclick="guardarProducto()">Guardar / Actualizar Producto</button>
-
-                <h3 style="margin-top:25px; font-size:16px;">Lista de Productos Disponibles</h3>
+                <h2>Inventario</h2>
+                <div class="form-group"><label>ID Código</label><input type="number" id="prodId"></div>
+                <div class="form-group"><label>Nombre</label><input type="text" id="prodName"></div>
+                <div class="form-group"><label>Precio</label><input type="number" step="0.1" id="prodPrice"></div>
+                <div class="form-group"><label>Stock</label><input type="number" id="prodStock"></div>
+                <button onclick="guardarProducto()">Guardar Producto</button>
                 <div class="table-responsive">
                     <table id="tablaProductos">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Precio</th>
-                                <th>Stock</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
 
             <div id="personalPanel" class="panel">
-                <h2>Registrar Nuevo Usuario del Sistema</h2>
-                <div class="form-group">
-                    <label>Nombre de Usuario (Login)</label>
-                    <input type="text" id="userUsername" placeholder="Ej: andy.espino">
-                </div>
-                <div class="form-group">
-                    <label>Contraseña</label>
-                    <input type="text" id="userPassword" placeholder="Ej: clave123">
-                </div>
-                <div class="form-group">
-                    <label>Nombre Completo</label>
-                    <input type="text" id="userName" placeholder="Ej: Andy Espino">
-                </div>
-                <div class="form-group">
-                    <label>Rol de Usuario</label>
-                    <select id="userRole">
-                        <option value="user">Cajero / Personal</option>
-                        <option value="admin">Administrador del Sistema</option>
-                    </select>
-                </div>
-                <button onclick="guardarUsuario()" style="background-color: #a855f7;">Registrar Usuario</button>
-
-                <h3 style="margin-top:25px; font-size:16px;">Usuarios del Sistema Registrados</h3>
-                <div class="table-responsive">
-                    <table id="tablaUsuarios">
-                        <thead>
-                            <tr>
-                                <th>Usuario</th>
-                                <th>Nombre</th>
-                                <th>Rol</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+                <h2>Personal Técnico</h2>
+                <div class="form-group"><label>Usuario de Acceso</label><input type="text" id="userUsername"></div>
+                <div class="form-group"><label>Clave Acceso</label><input type="text" id="userPassword"></div>
+                <div class="form-group"><label>Nombre Completo</label><input type="text" id="userName"></div>
+                <button onclick="guardarUsuario()">Registrar Usuario</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Credenciales oficiales de tu Supabase actualizadas
+        // CREDENCIALES PÚBLICAS REVISADAS DE SUPABASE
         const SUPABASE_URL = "https://amwkdeiujtvujtbfeqh.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZWl1anR2dWp0YmZlcWgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDM5NzA0NCwiZXhwIjoyMDY1OTczMDQ0fQ.hN6vR3B1lD_jCgIuBwI-ZofD_x_D-ZovO_o6-B8v8nE"; 
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtd2tkZWl1anR2dWp0YmZlcWgiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1MDM5NzA0NCwiZXhwIjoyMDY1OTczMDQ0fQ.hN6vR3B1lD_jCgIuBwI-ZofD_x_D-ZovO_o6-B8v8nE";
         
+        // Inicialización de Supabase Client
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentUser = null;
-        let carrito = [];
+        let currentUser = null; 
+        let carrito = []; 
         let productosLocales = [];
 
+        // INGRESO AL SISTEMA (Con lectura tolerante a mayúsculas/minúsculas)
         async function login() {
-            // Convierte automáticamente el texto ingresado a minúsculas para prevenir problemas de teclado
-            const userIn = document.getElementById('loginUser').value.trim().toLowerCase();
+            const userIn = document.getElementById('loginUser').value.trim();
             const passIn = document.getElementById('loginPass').value.trim();
-
-            if(!userIn || !passIn) return alert("Por favor complete todos los campos");
+            if(!userIn || !passIn) return alert("Por favor complete los dos campos");
 
             try {
+                // El comando .ilike ignora si pones Admin o admin, Andy o andy
                 const { data, error } = await _supabase
                     .from('users')
                     .select('*')
-                    .eq('username', userIn)
+                    .ilike('username', userIn)
                     .eq('password', passIn);
 
                 if (error || !data || data.length === 0) {
@@ -274,52 +142,48 @@
                     document.getElementById('loginScreen').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
                     
+                    // Si el rol es admin habilita la pestaña de crear usuarios
                     if(currentUser.role === 'admin') {
                         document.getElementById('tabPersonal').style.display = 'block';
                     }
                     cargarTodo();
                 }
-            } catch (err) {
-                alert("Error de conexión: " + err.message);
+            } catch (err) { 
+                alert("Error de conexión: " + err.message); 
             }
         }
 
-        function logout() {
-            currentUser = null;
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('mainContent').style.display = 'none';
-            document.getElementById('tabPersonal').style.display = 'none';
-            document.getElementById('loginUser').value = '';
-            document.getElementById('loginPass').value = '';
+        function logout() { 
+            location.reload(); 
         }
 
         function switchTab(e, panelId) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-            e.target.classList.add('active');
+            e.target.classList.add('active'); 
             document.getElementById(panelId).classList.add('active');
         }
 
-        function cargarTodo() {
-            obtenerProductos();
-            obtenerVentas();
-            if(currentUser.role === 'admin') obtenerUsuarios();
+        function cargarTodo() { 
+            obtenerProductos(); 
+            obtenerVentas(); 
         }
 
+        // CONTROL DE INVENTARIO DESDE BASE DE DATOS
         async function obtenerProductos() {
-            const { data, error } = await _supabase.from('products').select('*').order('id', { ascending: true });
-            if (!error && data) {
+            const { data } = await _supabase.from('products').select('*').order('id', { ascending: true });
+            if (data) {
                 productosLocales = data;
-                const tbody = document.querySelector('#tablaProductos tbody');
+                const tbody = document.querySelector('#tablaProductos tbody'); 
                 tbody.innerHTML = '';
-                data.forEach(p => {
-                    tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>S/ ${p.price.toFixed(2)}</td><td>${p.stock}</td></tr>`;
+                data.forEach(p => { 
+                    tbody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>S/ ${p.price.toFixed(2)}</td><td>${p.stock}</td></tr>`; 
                 });
-
-                const select = document.getElementById('ventaProducto');
+                
+                const select = document.getElementById('ventaProducto'); 
                 select.innerHTML = '';
-                data.forEach(p => {
-                    select.innerHTML += `<option value="${p.id}">${p.name} (Stock: ${p.stock})</option>`;
+                data.forEach(p => { 
+                    select.innerHTML += `<option value="${p.id}">${p.name}</option>`; 
                 });
             }
         }
@@ -329,157 +193,87 @@
             const name = document.getElementById('prodName').value.trim();
             const price = parseFloat(document.getElementById('prodPrice').value);
             const stock = parseInt(document.getElementById('prodStock').value);
+            
+            if(!id || !name || isNaN(price) || isNaN(stock)) return alert("Rellene todos los campos de producto");
 
-            if(!id || !name || isNaN(price) || isNaN(stock)) return alert("Rellene todos los campos correctamente");
-
-            const { error } = await _supabase.from('products').upsert({ id, name, price, stock });
-            if(error) {
-                alert("Error al guardar: " + error.message);
-            } else {
-                alert("¡Producto guardado exitosamente!");
-                document.getElementById('prodId').value = '';
-                document.getElementById('prodName').value = '';
-                document.getElementById('prodPrice').value = '';
-                document.getElementById('prodStock').value = '';
-                obtenerProductos();
-            }
+            await _supabase.from('products').upsert({ id, name, price, stock });
+            alert("Inventario Actualizado");
+            document.getElementById('prodId').value = '';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodStock').value = '';
+            obtenerProductos();
         }
 
-        async function obtenerUsuarios() {
-            const { data, error } = await _supabase.from('users').select('*');
-            if(!error && data) {
-                const tbody = document.querySelector('#tablaUsuarios tbody');
-                tbody.innerHTML = '';
-                data.forEach(u => {
-                    tbody.innerHTML += `<tr><td>${u.username}</td><td>${u.name}</td><td><span class="badge badge-${u.role}">${u.role.toUpperCase()}</span></td></tr>`;
-                });
-            }
-        }
-
+        // REGISTRAR NUEVOS TRABAJADORES DESDE PANEL ADMIN
         async function guardarUsuario() {
-            const username = document.getElementById('userUsername').value.trim().toLowerCase();
+            const username = document.getElementById('userUsername').value.trim();
             const password = document.getElementById('userPassword').value.trim();
             const name = document.getElementById('userName').value.trim();
-            const role = document.getElementById('userRole').value;
+            
+            if(!username || !password || !name) return alert("Rellene todos los campos del técnico");
 
-            if(!username || !password || !name) return alert("Rellene todos los campos del usuario");
-
-            const { error } = await _supabase.from('users').insert({ username, password, name, role });
-            if(error) {
-                alert("Error al registrar: " + error.message);
-            } else {
-                alert("¡Usuario registrado exitosamente!");
-                document.getElementById('userUsername').value = '';
-                document.getElementById('userPassword').value = '';
-                document.getElementById('userName').value = '';
-                obtenerUsuarios();
-            }
+            await _supabase.from('users').insert({ username, password, name, role: 'user' });
+            alert("Nuevo usuario guardado exitosamente");
+            document.getElementById('userUsername').value = '';
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userName').value = '';
         }
 
+        // OPERACIONES DEL CARRITO DE COMPRAS
         function agregarAlCarrito() {
             const prodId = parseInt(document.getElementById('ventaProducto').value);
             const cantidad = parseInt(document.getElementById('ventaCantidad').value);
             const producto = productosLocales.find(p => p.id === prodId);
-
-            if(!producto) return;
-            if(cantidad > producto.stock) return alert("No hay suficiente stock disponible");
-
-            const itemExiste = carrito.find(item => item.id === prodId);
-            if(itemExiste) {
-                if((itemExiste.cantidad + cantidad) > producto.stock) return alert("Excede el stock disponible");
-                itemExiste.cantidad += cantidad;
-            } else {
-                carrito.push({ id: producto.id, name: producto.name, price: producto.price, cantidad: cantidad });
+            
+            if(producto) { 
+                carrito.push({ id: producto.id, name: producto.name, price: producto.price, cantidad }); 
+                renderCarrito(); 
             }
-            renderCarrito();
-        }
-
-        function eliminarDelCarrito(id) {
-            carrito = carrito.filter(item => item.id !== id);
-            renderCarrito();
         }
 
         function renderCarrito() {
-            const tbody = document.querySelector('#tablaCarrito tbody');
-            tbody.innerHTML = '';
+            const tbody = document.querySelector('#tablaCarrito tbody'); 
+            tbody.innerHTML = ''; 
             let total = 0;
-            carrito.forEach(item => {
-                const subtotal = item.price * item.cantidad;
-                total += subtotal;
-                tbody.innerHTML += `<tr>
-                    <td>${item.name}</td>
-                    <td>${item.cantidad}</td>
-                    <td>S/ ${item.price.toFixed(2)}</td>
-                    <td>S/ ${subtotal.toFixed(2)}</td>
-                    <td><button onclick="eliminarDelCarrito(${item.id})" style="background:#ef4444; padding:4px 8px; font-size:12px; margin:0; width:auto;">X</button></td>
-                </tr>`;
+            
+            carrito.forEach(item => { 
+                total += item.price * item.cantidad; 
+                tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.cantidad}</td><td>S/ ${item.price.toFixed(2)}</td><td>S/ ${(item.price * item.cantidad).toFixed(2)}</td><td>-</td></tr>`; 
             });
             document.getElementById('totalCarrito').textContent = total.toFixed(2);
         }
 
+        // GUARDAR LA VENTA DE FORMA PERSISTENTE
         async function procesarVenta() {
-            if(carrito.length === 0) return alert("El carrito está vacío");
-
+            if(carrito.length === 0) return alert("El carrito de ventas está vacío");
+            
             const numBoleta = "BOL-" + Math.floor(100000 + Math.random() * 900000);
-            const hora = new Date().toLocaleTimeString();
-            const total = parseFloat(document.getElementById('totalCarrito').textContent);
-            const cajero = currentUser.name;
-
-            const { error: ventaError } = await _supabase.from('sales').insert({
-                boleta: numBoleta,
-                hora: hora,
-                cajero: cajero,
-                total: total,
-                items: carrito
+            const totalVenta = parseFloat(document.getElementById('totalCarrito').textContent);
+            
+            await _supabase.from('sales').insert({ 
+                boleta: numBoleta, 
+                hora: new Date().toLocaleTimeString(), 
+                cajero: currentUser.name, 
+                total: totalVenta, 
+                items: carrito 
             });
-
-            if(ventaError) return alert("Error al registrar venta: " + ventaError.message);
-
-            for(let item of carrito) {
-                const prod = productosLocales.find(p => p.id === item.id);
-                if(prod) {
-                    const nuevoStock = prod.stock - item.cantidad;
-                    await _supabase.from('products').update({ stock: nuevoStock }).eq('id', item.id);
-                }
-            }
-
-            alert("¡Venta guardada exitosamente! Código: " + numBoleta);
-            carrito = [];
-            renderCarrito();
-            cargarTodo();
+            
+            alert("Venta registrada con éxito en Supabase"); 
+            carrito = []; 
+            renderCarrito(); 
+            obtenerVentas();
         }
 
         async function obtenerVentas() {
-            const { data, error } = await _supabase.from('sales').select('*').order('created_at', { ascending: false });
-            const contenedor = document.getElementById('listaHistorial');
-            if(error) {
-                contenedor.innerHTML = "Error al cargar el historial";
-                return;
-            }
-            if(!data || data.length === 0) {
-                contenedor.innerHTML = "No hay ventas registradas aún";
-                return;
-            }
-
+            const { data } = await _supabase.from('sales').select('*').order('created_at', { ascending: false });
+            const contenedor = document.getElementById('listaHistorial'); 
             contenedor.innerHTML = '';
-            data.forEach(v => {
-                let itemsHtml = '<ul style="margin-left:20px; font-size:13px; color:#475569;">';
-                if(Array.isArray(v.items)) {
-                    v.items.forEach(i => {
-                        itemsHtml += `<li>${i.name} (x${i.cantidad}) - S/ ${(i.price * i.cantidad).toFixed(2)}</li>`;
-                    });
-                }
-                itemsHtml += '</ul>';
-
-                contenedor.innerHTML += `<div class="card">
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:5px; font-size:14px; color:#1e293b;">
-                        <span>${v.boleta}</span>
-                        <span style="color:#10b981;">S/ ${v.total.toFixed(2)}</span>
-                    </div>
-                    <div style="font-size:12px; color:#64748b; margin-bottom:8px;">Hora: ${v.hora} | Cajero: ${v.cajero}</div>
-                    ${itemsHtml}
-                </div>`;
-            });
+            if(data) { 
+                data.forEach(v => { 
+                    contenedor.innerHTML += `<div class="card"><b>${v.boleta}</b> - Total: S/ ${v.total.toFixed(2)} <br> <small>Hora: ${v.hora} | Encargado: ${v.cajero}</small></div>`; 
+                }); 
+            }
         }
     </script>
 </body>
